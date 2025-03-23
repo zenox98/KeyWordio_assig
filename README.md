@@ -29,40 +29,6 @@ The project allow user to search keyword in the web and save in the database for
 
 The project is divided into two main parts: the backend (Django) and the frontend (React).
 
-
-KeyWordio_assig/
-├── backend/ # Django project
-│ ├── keywordio/ # Main Django app
-│ │ ├── migrations/
-│ │ ├── init.py
-│ │ ├── admin.py
-│ │ ├── apps.py
-│ │ ├── models.py
-│ │ ├── serializers.py
-│ │ ├── urls.py
-│ │ ├── views.py
-│ │ └── tests.py # (Good to have tests!)
-│ ├── manage.py
-│ └── keywordio_project/ # Django project settings
-│ ├── init.py
-│ ├── asgi.py
-│ ├── settings.py
-│ ├── urls.py
-│ └── wsgi.py
-├── frontend/ # React project
-│ ├── public/
-│ ├── src/
-│ │ ├── components/
-│ │ │ ├── Dashboard.jsx #
-│ │ │ └── SearchForm.jsx #
-│ │ ├── App.js
-│ │ ├── index.js
-│ │ └── App.css
-│ ├── package.json
-│ ├── package-lock.json (or yarn.lock)
-│ └── README.md (This file, but for the frontend specifically, if needed)
-└── README.md # This file
-
 *   **`backend/`**:  Contains the Django REST Framework API.
     *   **`keywordio/`**:  The main Django application where you define models, views, serializers, and URLs for your API.
     *   **`keywordio_project/`**:  The Django project's settings, including database configuration, installed apps, middleware, and URL routing.
