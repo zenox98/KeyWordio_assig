@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import { getAllBooks } from "../../apis/getAllBooks";
+import { deleteBook } from "../../apis/deleteBook";
 
 // types
 import { booksInfoProps, booksInfoProps2 } from "../../types/book";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 export default function Home() {
   const [listOfBooks, setListOfBooks] = useState<booksInfoProps2[]>([]);
+  
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -52,10 +55,14 @@ export default function Home() {
     }
   };
 
+  const handleUpdate = (id: string) => {
+    navigate(`/update/${id}`);
+  };
+
   return (
     <div className=" p-5 w-full h-screen flex flex-wrap justify-center items-center">
       <div className="border border-black p-2 w-full h-full">
-        <div className="w-full h-auto px-1 py-3">
+        <div className="w-full h-auto px-1 py-3 mx-1">
           <Link to="/add">
             <button className="border border-black p-1">Add Book</button>
           </Link>

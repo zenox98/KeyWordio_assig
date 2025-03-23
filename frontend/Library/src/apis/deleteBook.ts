@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-export const updateBook = async (id: string, updatedBookData: any) => { // Use a more specific type than 'any' if possible
+export const deleteBook = async (id: string) => {
   try {
-    const response = await axios.put(`http://localhost:8000/delete_book/${id}`, updatedBookData); // Replace with your API
-    return response.data;
+    const response = await axios.delete(`${import.meta.env.VITE_URL}/delete_book/${id}`); // Replace with your API endpoint
+    return response.data; // Or just return response if you don't need the data
   } catch (error) {
-      console.error("API Error:", error);
-      throw error;
+    console.error("API Error:", error);
+    throw error; // Re-throw the error so the calling function can handle it
   }
 };

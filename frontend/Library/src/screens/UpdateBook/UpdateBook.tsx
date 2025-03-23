@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router";
 import { bookImageProp, booksInfoProps } from "../../types/book";
-import { postAddBook } from "../../apis/postAddBook";
+import { updateBook } from "../../apis/updateBook";
+import { getBookById } from "../../apis/getBookById";
 
 interface InputBoxProps {
   value?: string | number;
@@ -49,58 +50,68 @@ const InputBox = (props: InputBoxProps) => {
 
 export default function UpdateBook() {
   const [book_name, setBookName] = useState<string>("");
-  const [book_id, setBookId] = useState<string>("");
   const [book_author, setBookAuthor] = useState<string>("");
   const [book_price, setBookPrice] = useState<number>();
   const [book_description, setBookDescription] = useState<string>("");
   const [book_image, setBookImage] = useState<File | null>(null);
 
+  const [book, setBook] = useState<booksInfoProps>();
+
+  const { id } = useParams<{ id: string }>();
+
+
   const navigate = useNavigate();
 
-  const handleUpdate = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const images : bookImageProp[] = []
-    images.push({
-      image: book_image,
-      created_at: `${Date.now}`
-    })
-
-    const formData : booksInfoProps = {
-      book_name: book_name,
-      book_id: book_id,
-      book_author: book_author,
-      book_description: book_description,
-      book_price: book_price,
-      images : images
+  useEffect(() => {
+    const fetchBook = async () => {
+      try {
+        if (id) {
+          const data = await getBookById(id);
+          setBook(data); // Assuming getBookById returns the correct Book type
+        }
+      } catch (error) {
+        console.log(error)
+      }
     };
 
-    console.log(formData);
-    postAddBook(formData)
+    fetchBook();
+  }, [id]);
 
-    navigate("/");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      e.preventDefault();
+
+      const images: bookImageProp[] = [];
+      images.push({
+        image: book_image,
+        created_at: `${Date.now}`,
+      });
+
+      const formData: booksInfoProps = {
+        book_name: book_name,
+        book_author: book_author,
+        book_description: book_description,
+        book_price: book_price,
+        images: images,
+      };
+      await updateBook(id!, formData); // Call the update API.  id! asserts id is not null/undefined
+      navigate("/"); // Redirect to home after successful update
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <div>
-      <form onSubmit={handleUpdate} method="post">
+      <form onSubmit={handleSubmit} method="put">
         <InputBox
           width="350px"
           name={"book name"}
           type={"text"}
           id={"book_name"}
           label={"Book Name"}
-          value={book_name}
+          value={book?.book_name}
           onChange={(e) => setBookName(e.target.value)}
-          required={true}
-        />
-        <InputBox
-          width="350px"
-          name={"book_id"}
-          type={"text"}
-          id={"book_id"}
-          label={"Book Id"}
-          value={book_id}
-          onChange={(e) => setBookId(e.target.value)}
           required={true}
         />
         <InputBox
@@ -109,7 +120,7 @@ export default function UpdateBook() {
           type={"text"}
           id={"book_author"}
           label={"Book Author"}
-          value={book_author}
+          value={book?.book_author}
           onChange={(e) => setBookAuthor(e.target.value)}
           required={true}
         />
@@ -119,7 +130,7 @@ export default function UpdateBook() {
           type={"number"}
           id={"book_price"}
           label={"Book Price"}
-          
+          value={book?.book_price}
           onChange={(e) => setBookPrice(Number(e.target.value))}
           required={true}
         />
@@ -132,9 +143,9 @@ export default function UpdateBook() {
           onChange={(e) => setBookImage(e.target.files?.[0] || null)}
           required={true}
         />
-        <div style={{ width: "350px"}} className="h-auto py-2 my-2">
+        <div style={{ width: "350px" }} className="h-auto py-2 my-2">
           <textarea
-            value={book_description}
+            value={book?.book_description}
             onChange={(e) => setBookDescription(e.target.value)}
             id="book_description"
             name="book_description"
@@ -147,7 +158,11 @@ export default function UpdateBook() {
           </label>
         </div>
 
-        <input type="submit" value="Add Book" className="p-2 text-lg border cursor-pointe1 border-black" />
+        <input
+          type="reset"
+          value="Add Book"
+          className="p-2 text-lg border cursor-pointe1 border-black"
+        />
       </form>
     </div>
   );
